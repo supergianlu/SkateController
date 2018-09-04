@@ -21,27 +21,6 @@
         android:orientation="vertical"
         android:weightSum="100">
 
-        <abak.tr.com.boxedverticalseekbar.BoxedVertical
-            android:id="@+id/boxed_vertical"
-            android:layout_width="60dp"
-            android:layout_height="0dp"
-            android:layout_gravity="center"
-            android:layout_marginBottom="30dp"
-            android:layout_marginTop="30dp"
-            android:layout_weight="85"
-            app:backgroundColor="@color/color_background"
-            app:progressColor="#00FF00"
-            app:textColor="#FF0000"
-            app:cornerRadius="20"
-            app:defaultValue="4"
-            app:imageEnabled="false"
-            app:textEnabled="true"
-            app:max="9"
-            app:step="1"
-            app:textBottomPadding="20"
-            app:textSize="12sp"
-            app:touchDisabled="true" />
-
         <Button
             android:id="@+id/button"
             style="@style/Widget.AppCompat.Button.Colored"

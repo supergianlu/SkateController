@@ -13,21 +13,22 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+
 import java.io.IOException;
 import java.util.UUID;
 
-import abak.tr.com.boxedverticalseekbar.BoxedVertical;
-
 public class ControllerActivity extends AppCompatActivity {
 
-    Button disconnectButton;
-    BoxedVertical boxedVertical;
-    String address = null;
+    private static final UUID myUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+    private static final String STOP = "0";
+    private static final String NEXT_GEAR = "1";
+
+    private String address = null;
     private ProgressDialog progress;
-    BluetoothAdapter myBluetooth = null;
-    BluetoothSocket btSocket = null;
+    private BluetoothSocket btSocket = null;
     private boolean isBtConnected = false;
-    static final UUID myUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+    private long timeVolumeUp;
+    private long timeVolumeDown;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,31 +37,12 @@ public class ControllerActivity extends AppCompatActivity {
         Intent intent = getIntent();
         address = intent.getStringExtra(MainActivity.EXTRA_ADDRESS);
 
+        timeVolumeUp = System.currentTimeMillis();
+        timeVolumeDown = System.currentTimeMillis();
+
         setContentView(R.layout.activity_controller);
 
-        boxedVertical = findViewById(R.id.boxed_vertical);
-
-        boxedVertical.setOnBoxedPointsChangeListener(new BoxedVertical.OnValuesChangeListener() {
-            @Override
-            public void onPointsChanged(BoxedVertical boxedPoints, final int value) {
-                //qui stampa tutti i valori
-                sendSignal(String.valueOf(value));
-                System.out.println(value);
-            }
-
-            @Override
-            public void onStartTrackingTouch(BoxedVertical boxedPoints) {
-                //Toast.makeText(ControllerActivity.this, "onStartTrackingTouch", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onStopTrackingTouch(BoxedVertical boxedPoints) {
-                //qui restituisce l'ultimo valore quando si è lasciato il robo
-                //Toast.makeText(ControllerActivity.this, "onStopTrackingTouch", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        disconnectButton = findViewById(R.id.button);
+        final Button disconnectButton = findViewById(R.id.button);
 
         new ConnectBT().execute();
 
@@ -81,8 +63,8 @@ public class ControllerActivity extends AppCompatActivity {
         });
     }
 
-    private void sendSignal ( String number ) {
-        if ( btSocket != null ) {
+    private void sendSignal (String number) {
+        if (btSocket != null) {
             try {
                 btSocket.getOutputStream().write(number.getBytes());
             } catch (IOException e) {
@@ -92,8 +74,8 @@ public class ControllerActivity extends AppCompatActivity {
     }
 
     private void disconnect() {
-        slowDownAndTurnOff();
-        if ( btSocket!=null ) {
+        slowSpeed();
+        if (btSocket!=null) {
             try {
                 btSocket.close();
             } catch(IOException e) {
@@ -107,13 +89,13 @@ public class ControllerActivity extends AppCompatActivity {
         Toast.makeText(getApplicationContext(), s, Toast.LENGTH_LONG).show();
     }
 
-    private void slowDownAndTurnOff(){
-        sendSignal("4");
+    private void slowSpeed(){
+        sendSignal(STOP);
     }
 
     @Override
     public void onPause(){
-        slowDownAndTurnOff();
+        slowSpeed();
         super.onPause();
     }
 
@@ -133,11 +115,17 @@ public class ControllerActivity extends AppCompatActivity {
         switch (keyCode) {
             case KeyEvent.KEYCODE_VOLUME_UP:
                 System.out.println("Volume up");
-                slowDownAndTurnOff();
+                if(System.currentTimeMillis() - timeVolumeUp > 500){
+                    timeVolumeUp = System.currentTimeMillis();
+                    sendSignal(NEXT_GEAR);
+                }
                 return true;
             case KeyEvent.KEYCODE_VOLUME_DOWN:
                 System.out.println("Volume down");
-                slowDownAndTurnOff();
+                if(System.currentTimeMillis() - timeVolumeDown > 500){
+                    timeVolumeDown = System.currentTimeMillis();
+                    slowSpeed();
+                }
                 return true;
             default:
                 return super.dispatchKeyEvent(event);
@@ -156,7 +144,7 @@ public class ControllerActivity extends AppCompatActivity {
         protected Void doInBackground (Void... devices) {
             try {
                 if ( btSocket==null || !isBtConnected ) {
-                    myBluetooth = BluetoothAdapter.getDefaultAdapter();
+                    final BluetoothAdapter myBluetooth = BluetoothAdapter.getDefaultAdapter();
                     BluetoothDevice dispositivo = myBluetooth.getRemoteDevice(address);
                     btSocket = dispositivo.createInsecureRfcommSocketToServiceRecord(myUUID);
                     BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
