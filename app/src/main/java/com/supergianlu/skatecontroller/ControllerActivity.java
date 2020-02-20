@@ -9,7 +9,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
-import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -42,28 +41,25 @@ public class ControllerActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_controller);
 
-        final Button disconnectButton = findViewById(R.id.button);
+        final Button disconnectButton = findViewById(R.id.disconnectButton);
+        final Button plusButton = findViewById(R.id.plusButton);
+        final Button minusButton = findViewById(R.id.minusButton);
 
         new ConnectBT().execute();
 
+        plusButton.setOnClickListener(e -> plus());
 
-        disconnectButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick (View v) {
-                Toast.makeText(getApplicationContext(), "Tenere premuto per disconnettere", Toast.LENGTH_LONG).show();
-            }
-        });
+        minusButton.setOnClickListener(e -> minus());
 
-        disconnectButton.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                disconnect();
-                return true;
-            }
+        disconnectButton.setOnClickListener(v -> msg("Tenere premuto per disconnettere"));
+
+        disconnectButton.setOnLongClickListener(v -> {
+            disconnect();
+            return true;
         });
     }
 
-    private void sendSignal (String number) {
+    private void sendSignal(String number) {
         if (btSocket != null) {
             try {
                 btSocket.getOutputStream().write(number.getBytes());
@@ -75,26 +71,26 @@ public class ControllerActivity extends AppCompatActivity {
 
     private void disconnect() {
         slowSpeed();
-        if (btSocket!=null) {
+        if (btSocket != null) {
             try {
                 btSocket.close();
-            } catch(IOException e) {
+            } catch (IOException e) {
                 msg("Errore");
             }
         }
         finish();
     }
 
-    private void msg (String s) {
+    private void msg(String s) {
         Toast.makeText(getApplicationContext(), s, Toast.LENGTH_LONG).show();
     }
 
-    private void slowSpeed(){
+    private void slowSpeed() {
         sendSignal(STOP);
     }
 
     @Override
-    public void onPause(){
+    public void onPause() {
         slowSpeed();
         super.onPause();
     }
@@ -114,21 +110,29 @@ public class ControllerActivity extends AppCompatActivity {
         int keyCode = event.getKeyCode();
         switch (keyCode) {
             case KeyEvent.KEYCODE_VOLUME_UP:
-                System.out.println("Volume up");
-                if(System.currentTimeMillis() - timeVolumeUp > 500){
-                    timeVolumeUp = System.currentTimeMillis();
-                    sendSignal(NEXT_GEAR);
-                }
+                plus();
                 return true;
             case KeyEvent.KEYCODE_VOLUME_DOWN:
-                System.out.println("Volume down");
-                if(System.currentTimeMillis() - timeVolumeDown > 500){
-                    timeVolumeDown = System.currentTimeMillis();
-                    slowSpeed();
-                }
+                minus();
                 return true;
             default:
                 return super.dispatchKeyEvent(event);
+        }
+    }
+
+    private void plus() {
+        System.out.println("PLUS");
+        if (System.currentTimeMillis() - timeVolumeUp > 500) {
+            timeVolumeUp = System.currentTimeMillis();
+            sendSignal(NEXT_GEAR);
+        }
+    }
+
+    private void minus() {
+        System.out.println("MINUS");
+        if (System.currentTimeMillis() - timeVolumeDown > 500) {
+            timeVolumeDown = System.currentTimeMillis();
+            slowSpeed();
         }
     }
 
@@ -136,14 +140,14 @@ public class ControllerActivity extends AppCompatActivity {
         private boolean connectSuccess = true;
 
         @Override
-        protected  void onPreExecute () {
+        protected void onPreExecute() {
             progress = ProgressDialog.show(ControllerActivity.this, "Connessione in corso...", "Attendere!");
         }
 
         @Override
-        protected Void doInBackground (Void... devices) {
+        protected Void doInBackground(Void... devices) {
             try {
-                if ( btSocket==null || !isBtConnected ) {
+                if (btSocket == null || !isBtConnected) {
                     final BluetoothAdapter myBluetooth = BluetoothAdapter.getDefaultAdapter();
                     BluetoothDevice dispositivo = myBluetooth.getRemoteDevice(address);
                     btSocket = dispositivo.createInsecureRfcommSocketToServiceRecord(myUUID);
@@ -158,7 +162,7 @@ public class ControllerActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute (Void result) {
+        protected void onPostExecute(Void result) {
             super.onPostExecute(result);
 
             if (!connectSuccess) {

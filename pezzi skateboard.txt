@@ -1,0 +1,24 @@
+16-tooth, 5mm HTD pitch, 9mm-wide timing belt pulley IL ROBO DENTATO http://shop.sdp-si.com/catalog/product/?id=A_6A55M016DF0906
+
+55-tooth, 5mm HTD pitch, 9mm-wide timing belt IL FILO DENTATO http://shop.sdp-si.com/catalog/product/?id=A%206R25M055090
+
+il robo da attaccare al motore http://shop.sdp-si.com/catalog/product/?id=A%206L25-040SF0910
+
+cavetti https://hobbyking.com/en_us/xt60-harness-for-2-packs-in-parallel-1pc-1.html
+e https://hobbyking.com/en_us/2-x-3s-gt-6s-splitter-jst-xh-5pcs-bag.html
+
+batterie https://hobbyking.com/en_us/zippy-flightmax-5000mah-3s1p-20c.html
+
+motore https://hobbyking.com/en_us/turnigy-aerodrive-sk3-6374-149kv-brushless-outrunner-motor.html
+https://hobbyking.com/it_it/turnigy-aerodrive-sk3-5055-280kv-brushless-outrunner-motor.html
+
+vesc https://www.banggood.com/it/FVT-CBWI120A-ESC-Brushless-Speed-Controller-For-110-and-18Series-RC-Cars-Skateboard-ESC-p-985970.html?stayold=1&cur_warehouse=CN
+https://hobbyking.com/en_us/hobbykingr-tm-x-car-beast-series-esc-1-8-scale-120a.html
+
+il pezzo di ferro da bloccare
+
+caricabatterie https://hobbyking.com/en_us/imax-b6-50w-5a-charger-discharger-1-6-cells-genuine.html
+
+arduino nano
+
+hc-05
